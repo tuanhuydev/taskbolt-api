@@ -1,9 +1,10 @@
 plugins {
-	kotlin("jvm") version "1.9.25"
-	kotlin("plugin.spring") version "1.9.25"
+	kotlin("jvm") version "2.3.20"
+	kotlin("plugin.spring") version "2.3.20"
 
 	id("org.springframework.boot") version "3.4.4"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("org.openapi.generator") version "7.12.0"
 }
 
 group = "com.tuanhuydev"
@@ -29,18 +30,55 @@ dependencies {
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-	//	Launch Darkly
-	implementation("com.launchdarkly:launchdarkly-java-server-sdk:7.0.0")
 
-	// Environment
-	implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+	// Open API Generator
+	implementation("io.swagger.core.v3:swagger-annotations:2.2.28")
+	implementation("jakarta.validation:jakarta.validation-api:3.1.1")
+	implementation("org.openapitools:jackson-databind-nullable:0.2.6")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
+	implementation("jakarta.servlet:jakarta.servlet-api:6.1.0")
+
 }
 
 kotlin {
 	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
+		freeCompilerArgs.addAll("-Xjsr305=strict")
 	}
 }
+
+// Auto generate based on spec
+openApiGenerate {
+	generatorName.set("kotlin-spring")
+	inputSpec.set("$rootDir/docs/taskbolt_spec.yml")
+	outputDir.set(layout.buildDirectory.dir("generated").get().asFile.path)
+
+	apiPackage.set("com.tuanhuydev.taskbolt.generated.api")
+	modelPackage.set("com.tuanhuydev.model.generated.model")
+	configOptions.set(
+		mapOf(
+			"dateLibrary" to "java21",
+			"interfaceOnly" to "true",
+			"useTags" to "true",
+			"openApiNullable" to "true",
+			"useSpringBoot3" to "true"
+		)
+	)
+}
+
+sourceSets {
+	main {
+		kotlin {
+			srcDirs(layout.buildDirectory.dir("generated/src/main/kotlin"))
+		}
+	}
+}
+
+
+// Make sure the generated code is compiled before running tests
+tasks.compileKotlin {
+	dependsOn(tasks.getByName("openApiGenerate"))
+}
+
 
 tasks.withType<Test> {
 	useJUnitPlatform()
