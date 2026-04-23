@@ -1,6 +1,7 @@
 plugins {
 	kotlin("jvm") version "2.3.20"
 	kotlin("plugin.spring") version "2.3.20"
+	kotlin("plugin.jpa") version "2.3.20"
 
 	id("org.springframework.boot") version "3.4.4"
 	id("io.spring.dependency-management") version "1.1.7"
@@ -22,6 +23,7 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -37,6 +39,10 @@ dependencies {
 	implementation("org.openapitools:jackson-databind-nullable:0.2.6")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
 	implementation("jakarta.servlet:jakarta.servlet-api:6.1.0")
+
+	// Database
+	runtimeOnly("org.postgresql:postgresql")
+	testRuntimeOnly("com.h2database:h2")
 
 }
 
@@ -79,7 +85,10 @@ tasks.compileKotlin {
 	dependsOn(tasks.getByName("openApiGenerate"))
 }
 
-
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.jar {
+	enabled = false
 }

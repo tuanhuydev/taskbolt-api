@@ -25,7 +25,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Task'
+                  $ref: '#/components/schemas/TaskResponseSchema'
     post:
       tags: [Tasks]
       operationId: createTask
@@ -35,14 +35,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewTask'
+              $ref: '#/components/schemas/CreateTaskRequestSchema'
       responses:
         '201':
           description: Task created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Task'
+                $ref: '#/components/schemas/TaskResponseSchema'
 
   /tasks/{taskId}:
     get:
@@ -61,7 +61,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Task'
+                $ref: '#/components/schemas/TaskResponseSchema'
         '404':
           description: Task not found
     put:
@@ -79,14 +79,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateTask'
+              $ref: '#/components/schemas/UpdateTaskRequestSchema'
       responses:
         '200':
           description: Task updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Task'
+                $ref: '#/components/schemas/TaskResponseSchema'
         '404':
           description: Task not found
     delete:
@@ -107,12 +107,12 @@ paths:
 
 components:
   schemas:
-    TaskStatus:
+    TaskStatusSchema:
       type: string
       enum: [pending, in_progress, completed]
       description: Status of a task
 
-    Task:
+    TaskResponseSchema:
       type: object
       required: [id, title, status]
       properties:
@@ -126,9 +126,9 @@ components:
           type: string
           description: Detailed description of the task
         status:
-          $ref: '#/components/schemas/TaskStatus'
+          $ref: '#/components/schemas/TaskStatusSchema'
 
-    NewTask:
+    CreateTaskRequestSchema:
       type: object
       required: [title]
       properties:
@@ -140,10 +140,10 @@ components:
           description: Detailed description of the task
         status:
           allOf:
-            - $ref: '#/components/schemas/TaskStatus'
+            - $ref: '#/components/schemas/TaskStatusSchema'
           default: pending
 
-    UpdateTask:
+    UpdateTaskRequestSchema:
       type: object
       properties:
         title:
@@ -153,4 +153,4 @@ components:
           type: string
           description: Detailed description of the task
         status:
-          $ref: '#/components/schemas/TaskStatus'
+          $ref: '#/components/schemas/TaskStatusSchema'

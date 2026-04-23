@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: taskbolt-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: taskbolt
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: taskbolt-api
+    ports:
+      - "8083:8083"
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/taskbolt
+      DATABASE_USERNAME: postgres
+      DATABASE_PASSWORD: postgres
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
+

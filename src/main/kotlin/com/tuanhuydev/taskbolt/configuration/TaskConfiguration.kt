@@ -1,6 +1,7 @@
 package com.tuanhuydev.taskbolt.configuration
 
 import com.tuanhuydev.taskbolt.application.ports.incoming.TaskUseCase
+import com.tuanhuydev.taskbolt.application.ports.outgoing.TaskRepository
 import com.tuanhuydev.taskbolt.application.usecases.TaskService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -9,5 +10,5 @@ import org.springframework.context.annotation.Configuration
 class TaskConfiguration {
 
     @Bean
-    fun taskUseCase(): TaskUseCase = TaskService()
+    fun taskUseCase(taskRepository: TaskRepository): TaskUseCase = TaskService(taskRepository)
 }
