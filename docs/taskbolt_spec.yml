@@ -1,0 +1,156 @@
+openapi: 3.0.3
+info:
+  title: TaskBolt API
+  version: 1.0.0
+  description: API specification for TaskBolt, a task management application.
+servers:
+  - url: /v1
+    description: Base URL for API version 1
+
+tags:
+  - name: Tasks
+    description: Task operations
+
+paths:
+  /tasks:
+    get:
+      tags: [Tasks]
+      operationId: getTasks
+      summary: Retrieve a list of tasks
+      responses:
+        '200':
+          description: A list of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskResponseSchema'
+    post:
+      tags: [Tasks]
+      operationId: createTask
+      summary: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequestSchema'
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponseSchema'
+
+  /tasks/{taskId}:
+    get:
+      tags: [Tasks]
+      operationId: getTaskById
+      summary: Retrieve a specific task by ID
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponseSchema'
+        '404':
+          description: Task not found
+    put:
+      tags: [Tasks]
+      operationId: updateTask
+      summary: Update a specific task by ID
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskRequestSchema'
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponseSchema'
+        '404':
+          description: Task not found
+    delete:
+      tags: [Tasks]
+      operationId: deleteTask
+      summary: Delete a specific task by ID
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Task deleted successfully
+        '404':
+          description: Task not found
+
+components:
+  schemas:
+    TaskStatusSchema:
+      type: string
+      enum: [pending, in_progress, completed]
+      description: Status of a task
+
+    TaskResponseSchema:
+      type: object
+      required: [id, title, status]
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the task
+        title:
+          type: string
+          description: Title of the task
+        description:
+          type: string
+          description: Detailed description of the task
+        status:
+          $ref: '#/components/schemas/TaskStatusSchema'
+
+    CreateTaskRequestSchema:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          description: Title of the task
+        description:
+          type: string
+          description: Detailed description of the task
+        status:
+          allOf:
+            - $ref: '#/components/schemas/TaskStatusSchema'
+          default: pending
+
+    UpdateTaskRequestSchema:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the task
+        description:
+          type: string
+          description: Detailed description of the task
+        status:
+          $ref: '#/components/schemas/TaskStatusSchema'

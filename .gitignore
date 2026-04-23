@@ -37,3 +37,13 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### Environment ###
+.env
+.env.*
+!.env.example
+application-local.yml
+
+### Docker ###
+docker-compose.override.yml
+
