@@ -44,6 +44,10 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	testRuntimeOnly("com.h2database:h2")
 
+	// Flyway — schema migrations
+	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-database-postgresql")
+
 }
 
 kotlin {
